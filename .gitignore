@@ -1,0 +1,3 @@
+# Build output and cached filter lists
+dist/
+node_modules/

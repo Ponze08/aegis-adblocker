@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Welcome to Aegis</title>
+<link rel="icon" type="image/png" href="img/icon_32.png">
+<script src="js/aegis/theme-boot.js"></script>
+<link rel="stylesheet" href="css/aegis/base.css">
+<link rel="stylesheet" href="css/aegis/welcome.css">
+</head>
+
+<body>
+<main class="welcome">
+
+    <section class="hero">
+        <div class="logo-wrap">
+            <span class="halo"></span>
+            <img src="img/logo.svg" alt="" width="84" height="84">
+        </div>
+        <h1>You&rsquo;re protected.</h1>
+        <p class="lead">Aegis is already blocking ads, trackers and dangerous sites on every website. There is nothing to set up, but here are three things worth knowing.</p>
+    </section>
+
+    <section class="card step">
+        <span class="step-num">1</span>
+        <div class="step-body">
+            <h2>Pin Aegis to your toolbar</h2>
+            <p class="muted">Click the puzzle piece <span class="icon sm inline" data-icon="puzzle"></span> at the top right of the browser, then the pin next to <b>Aegis</b>. One click on the shield shows what was blocked on the page, and lets you turn protection off for a site.</p>
+        </div>
+        <div class="toolbar-mock" aria-hidden="true">
+            <span class="mock-url"><span class="icon xs" data-icon="lock"></span>example.com</span>
+            <span class="mock-ext">
+                <img src="img/icon_32.png" alt="" width="18" height="18">
+                <span class="mock-badge">12</span>
+            </span>
+            <span class="mock-puzzle"><span class="icon sm" data-icon="puzzle"></span></span>
+        </div>
+    </section>
+
+    <section class="card step">
+        <span class="step-num">2</span>
+        <div class="step-body">
+            <h2>Pick your extras</h2>
+            <p class="muted">Optional filters for a calmer web. Turn them on or off anytime from <a href="dashboard.html#lists">Filter lists</a>.</p>
+            <div class="extras" id="extras"></div>
+            <p class="lang-note" id="langNote" hidden></p>
+        </div>
+    </section>
+
+    <section class="card step">
+        <span class="step-num">3</span>
+        <div class="step-body">
+            <h2>If a site misbehaves</h2>
+            <p class="muted">Once in a while, blocking can break a feature. Open the popup, then switch the site to <b>Basic</b> or turn protection off for that site only. Aegis remembers your choice for each site.</p>
+            <div class="levels-mini" aria-hidden="true">
+                <span>Off</span><span>Basic</span><span class="on">Standard</span><span>Strict</span>
+            </div>
+        </div>
+    </section>
+
+    <div class="actions">
+        <button class="btn lg primary" id="done" type="button">Start browsing<span class="icon sm" data-icon="arrow-right"></span></button>
+        <a class="btn lg" href="dashboard.html">Open the dashboard</a>
+    </div>
+
+    <p class="credit">Powered by the <a href="https://github.com/gorhill/uBlock" target="_blank" rel="noopener">uBlock Origin Lite</a> engine.</p>
+</main>
+
+<script src="js/aegis/welcome.js" type="module"></script>
+</body>
+</html>

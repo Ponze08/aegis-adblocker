@@ -1,0 +1,109 @@
+/*******************************************************************************
+
+    Aegis — re-skin of the uBO Lite engine pages (element picker, zapper,
+    strict-block warning page), by remapping the engine's design tokens to
+    the Aegis palette. Injected by scripts/build.mjs.
+
+*******************************************************************************/
+
+:root {
+    --font-family: 'Inter', 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif;
+
+    /* Accent: Aegis mint */
+    --primary-5:    1  22  16;
+    --primary-10:   2  36  27;
+    --primary-20:   4  66  49;
+    --primary-30:   5  96  71;
+    --primary-40:   6 128  94;
+    --primary-50:  10 168 119;
+    --primary-60:  34 207 150;
+    --primary-70:  94 226 179;
+    --primary-80: 150 238 205;
+    --primary-90: 204 247 230;
+    --primary-95: 230 251 243;
+
+    /* Neutrals: Aegis slate */
+    --gray-5:    9  14  26;
+    --gray-10:  17  24  39;
+    --gray-15:  23  32  51;
+    --gray-20:  29  40  62;
+    --gray-25:  37  49  73;
+    --gray-30:  43  57  83;
+    --gray-35:  58  71  97;
+    --gray-40:  71  84 110;
+    --gray-45:  86  98 124;
+    --gray-50: 103 115 139;
+    --gray-55: 120 131 153;
+    --gray-60: 138 148 168;
+    --gray-65: 156 165 183;
+    --gray-70: 172 180 196;
+    --gray-75: 187 194 208;
+    --gray-80: 203 209 220;
+    --gray-85: 218 223 231;
+    --gray-90: 231 235 241;
+    --gray-95: 243 245 249;
+}
+
+/* Picker and zapper panels */
+#ubol-picker aside,
+#ubol-zapper aside,
+#ubol-unpicker aside {
+    border-radius: 14px;
+    box-shadow: 0 2px 6px rgb(16 24 40 / .08), 0 24px 48px -16px rgb(16 24 40 / .30);
+    overflow: hidden;
+}
+
+button {
+    border-radius: 8px;
+}
+
+/* Strict-block warning page */
+body:has(#warningSign) {
+    min-height: 100vh;
+    margin: 0;
+    box-sizing: border-box;
+    padding-top: 10vh;
+    background:
+        radial-gradient(60% 45% at 50% 0%, rgb(245 158 11 / .16), transparent 70%),
+        rgb(var(--gray-95));
+}
+:root.dark body:has(#warningSign) {
+    background:
+        radial-gradient(60% 45% at 50% 0%, rgb(245 158 11 / .14), transparent 70%),
+        rgb(var(--gray-5));
+}
+body:has(#warningSign) #rootContainer {
+    padding: 36px 40px 28px;
+    border: 1px solid rgb(var(--gray-85));
+    border-radius: 20px;
+    background: #fff;
+    box-shadow: 0 2px 6px rgb(16 24 40 / .06), 0 24px 48px -16px rgb(16 24 40 / .18);
+}
+:root.dark body:has(#warningSign) #rootContainer {
+    border-color: rgb(var(--gray-20));
+    background: rgb(var(--gray-10));
+}
+#warningSign {
+    color: #f59e0b !important;
+    fill: #f59e0b !important;
+    font-size: 64px !important;
+}
+#theURL .code {
+    padding: 8px 10px;
+    border-radius: 8px;
+}
+#actionContainer button {
+    height: 40px;
+    padding: 0 18px;
+    font-weight: 600;
+}
+#actionContainer #back {
+    border: 0;
+    background: rgb(var(--primary-50));
+    color: #fff;
+}
+#actionContainer #proceed.preferred {
+    border: 1px solid rgb(var(--gray-70));
+    background: transparent;
+    color: inherit;
+}

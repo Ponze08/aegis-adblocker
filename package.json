@@ -1,0 +1,19 @@
+{
+  "name": "aegis",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A friendly ad & tracker blocker built on the uBlock Origin Lite engine",
+  "license": "GPL-3.0-or-later",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "build:ui": "node scripts/build.mjs --ui",
+    "build:fresh": "node scripts/build.mjs --fresh",
+    "icons": "node scripts/make-icons.mjs",
+    "test": "node scripts/smoke-test.mjs",
+    "test:edge": "node scripts/smoke-test.mjs --edge"
+  }
+}

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="color-scheme" content="light dark">
+<title>Aegis</title>
+<script src="js/aegis/theme-boot.js"></script>
+<link rel="stylesheet" href="css/aegis/base.css">
+<link rel="stylesheet" href="css/aegis/popup.css">
+</head>
+
+<body class="loading" data-state="loading">
+
+<header class="top">
+    <div class="brand">
+        <img src="img/logo.svg" alt="" width="22" height="22">
+        <span>Aegis</span>
+    </div>
+    <div class="top-actions">
+        <div class="menu-wrap">
+            <button class="icon-btn" id="pauseMenuButton" type="button" title="Pause protection everywhere" aria-haspopup="menu" aria-expanded="false">
+                <span class="icon" data-icon="pause"></span>
+            </button>
+            <div class="menu" id="pauseMenu" role="menu" hidden>
+                <div class="menu-title">Pause protection everywhere</div>
+                <button type="button" role="menuitem" data-minutes="15"><span class="icon sm" data-icon="clock"></span>For 15 minutes</button>
+                <button type="button" role="menuitem" data-minutes="60"><span class="icon sm" data-icon="clock"></span>For 1 hour</button>
+                <button type="button" role="menuitem" data-minutes="0"><span class="icon sm" data-icon="pause"></span>Until I resume</button>
+            </div>
+        </div>
+        <button class="icon-btn" id="openDashboard" type="button" title="Open the dashboard">
+            <span class="icon" data-icon="sliders"></span>
+        </button>
+    </div>
+</header>
+
+<main>
+    <section class="hero">
+        <button class="orb" id="orb" type="button" aria-describedby="statusTitle">
+            <span class="orb-glow"></span>
+            <span class="orb-ring"></span>
+            <span class="orb-core"><span class="icon" id="orbIcon" data-icon="shield-check"></span></span>
+        </button>
+        <h1 id="statusTitle">&nbsp;</h1>
+        <p id="statusSub"><span id="hostname">&nbsp;</span></p>
+    </section>
+
+    <section class="card stats" id="statsCard">
+        <div class="stats-head">
+            <div class="big">
+                <span id="blockedCount">0</span>
+                <span class="big-label" id="blockedLabel">blocked on this page</span>
+            </div>
+            <button class="link-btn" id="detailsToggle" type="button" aria-expanded="false" aria-controls="details">
+                Details<span class="icon xs" data-icon="chevron-down"></span>
+            </button>
+        </div>
+        <div class="catbar" id="catbar" role="img"></div>
+        <ul class="legend" id="legend"></ul>
+        <div class="details" id="details" hidden>
+            <ul class="domains" id="domains"></ul>
+            <button class="link-btn" id="openActivity" type="button">
+                Open the activity log<span class="icon xs" data-icon="arrow-right"></span>
+            </button>
+        </div>
+    </section>
+
+    <section class="card level" id="levelCard">
+        <div class="level-head">
+            <h2>Protection level</h2>
+            <span class="chip" id="levelChip">Default</span>
+        </div>
+        <div class="seg" id="levelSeg" role="group" aria-label="Protection level">
+            <button type="button" data-value="0">Off</button>
+            <button type="button" data-value="1">Basic</button>
+            <button type="button" data-value="2">Standard</button>
+            <button type="button" data-value="3">Strict</button>
+        </div>
+        <p class="level-desc" id="levelDesc">&nbsp;</p>
+    </section>
+
+    <section class="tools" id="tools">
+        <button class="tool" id="toolZap" type="button" title="Click elements on the page to remove them until the next reload">
+            <span class="tool-icon"><span class="icon" data-icon="zap"></span></span>
+            <span>Zap</span>
+        </button>
+        <button class="tool" id="toolPick" type="button" title="Hide an element on this site, permanently">
+            <span class="tool-icon"><span class="icon" data-icon="crosshair"></span></span>
+            <span>Hide</span>
+        </button>
+        <button class="tool" id="toolUnpick" type="button" title="Show again elements you hid on this site">
+            <span class="tool-icon"><span class="icon" data-icon="eye"></span></span>
+            <span>Unhide</span>
+        </button>
+        <button class="tool" id="toolFix" type="button" aria-expanded="false" aria-controls="fixPanel" title="Get help when a site doesn’t work properly">
+            <span class="tool-icon"><span class="icon" data-icon="wrench"></span></span>
+            <span>Site broken?</span>
+        </button>
+    </section>
+
+    <section class="card fix" id="fixPanel" hidden>
+        <h2>Is this site not working right?</h2>
+        <p class="muted">Blocking can sometimes break a feature. Try these, in order:</p>
+        <ol>
+            <li>
+                <div><strong>Switch to Basic</strong><span class="muted">Still blocks ads and trackers, skips the page clean-up that most often causes issues.</span></div>
+                <button class="btn sm" type="button" data-fix-level="1">Apply</button>
+            </li>
+            <li>
+                <div><strong>Turn protection off here</strong><span class="muted">Nothing gets blocked on this site until you turn it back on.</span></div>
+                <button class="btn sm" type="button" data-fix-level="0">Turn off</button>
+            </li>
+        </ol>
+    </section>
+
+    <section class="card paused-panel" id="pausedPanel" hidden>
+        <p>Nothing is being blocked right now. Your settings are kept and come back when you resume.</p>
+        <button class="btn primary" id="resumeButton" type="button"><span class="icon sm" data-icon="play"></span>Resume protection</button>
+    </section>
+
+    <section class="na" id="naPanel" hidden>
+        <p>Aegis protects regular websites. Browser pages, the extension store and local files are off-limits to extensions.</p>
+    </section>
+</main>
+
+<footer class="bottom">
+    <span class="lifetime"><span class="icon xs" data-icon="shield-check"></span><b class="num" id="totalBlocked">0</b>&nbsp;blocked in total<span class="sep">·</span><span class="num" id="todayBlocked">0</span>&nbsp;today</span>
+</footer>
+
+<script src="js/aegis/popup.js" type="module"></script>
+</body>
+</html>

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Aegis Dashboard</title>
+<link rel="icon" type="image/png" href="img/icon_32.png">
+<script src="js/aegis/theme-boot.js"></script>
+<link rel="stylesheet" href="css/aegis/base.css">
+<link rel="stylesheet" href="css/aegis/dashboard.css">
+</head>
+
+<body class="loading">
+<div class="app">
+
+<!-- ---------------------------------------------------------------------- -->
+<aside class="sidebar">
+    <a class="sidebar-brand" href="#overview">
+        <img src="img/logo.svg" alt="" width="30" height="30">
+        <span>Aegis</span>
+    </a>
+    <nav class="nav" aria-label="Sections">
+        <a href="#overview" data-page="overview"><span class="icon" data-icon="home"></span>Overview</a>
+        <a href="#protection" data-page="protection"><span class="icon" data-icon="shield-check"></span>Protection</a>
+        <a href="#lists" data-page="lists"><span class="icon" data-icon="layers"></span>Filter lists<span class="nav-count" id="navListCount"></span></a>
+        <a href="#sites" data-page="sites"><span class="icon" data-icon="globe"></span>Site settings<span class="nav-count" id="navSiteCount"></span></a>
+        <a href="#filters" data-page="filters"><span class="icon" data-icon="code"></span>My filters</a>
+        <a href="#activity" data-page="activity"><span class="icon" data-icon="activity"></span>Activity<span class="live-dot" id="navLive" title="Live"></span></a>
+        <div class="nav-sep"></div>
+        <a href="#settings" data-page="settings"><span class="icon" data-icon="sliders"></span>Settings</a>
+        <a href="#about" data-page="about"><span class="icon" data-icon="info"></span>About</a>
+    </nav>
+    <div class="sidebar-status" id="sidebarStatus">
+        <div class="status-line">
+            <span class="status-dot"></span>
+            <div>
+                <strong id="sidebarStatusTitle">Protection active</strong>
+                <span id="sidebarStatusSub">&nbsp;</span>
+            </div>
+        </div>
+        <button class="btn sm" id="sidebarPause" type="button"><span class="icon sm" data-icon="pause"></span><span>Pause</span></button>
+    </div>
+</aside>
+
+<!-- ---------------------------------------------------------------------- -->
+<main class="content">
+
+<div class="pause-banner" id="pauseBanner" hidden>
+    <span class="icon" data-icon="pause"></span>
+    <div><strong>Protection is paused on all sites.</strong> <span id="pauseBannerSub"></span></div>
+    <button class="btn sm" id="pauseBannerResume" type="button"><span class="icon sm" data-icon="play"></span>Resume now</button>
+</div>
+
+<!-- Overview ------------------------------------------------------------- -->
+<section class="page" data-page="overview" hidden>
+    <header class="page-head">
+        <div>
+            <h1 id="overviewGreeting">Overview</h1>
+            <p class="muted" id="overviewSince">&nbsp;</p>
+        </div>
+    </header>
+
+    <div class="tiles">
+        <div class="card tile">
+            <span class="tile-label">Blocked today</span>
+            <span class="tile-value" id="tileToday">0</span>
+            <span class="tile-sub" id="tileTodaySub">&nbsp;</span>
+        </div>
+        <div class="card tile">
+            <span class="tile-label">Last 7 days</span>
+            <span class="tile-value" id="tileWeek">0</span>
+            <span class="tile-sub" id="tileWeekSub">&nbsp;</span>
+        </div>
+        <div class="card tile">
+            <span class="tile-label">All time</span>
+            <span class="tile-value" id="tileTotal">0</span>
+            <span class="tile-sub" id="tileTotalSub">&nbsp;</span>
+        </div>
+        <div class="card tile">
+            <span class="tile-label">Links cleaned</span>
+            <span class="tile-value" id="tileCleaned">0</span>
+            <span class="tile-sub">Tracking parameters removed</span>
+        </div>
+    </div>
+
+    <div class="card chart-card">
+        <div class="card-head">
+            <div>
+                <h2>Blocked, day by day</h2>
+                <p class="muted">Requests stopped over the last 30 days, by kind</p>
+            </div>
+            <div class="seg small" id="chartView" role="group" aria-label="View">
+                <button type="button" data-value="chart">Chart</button>
+                <button type="button" data-value="table">Table</button>
+            </div>
+        </div>
+        <ul class="chart-legend" id="chartLegend"></ul>
+        <div class="chart" id="dailyChart"></div>
+        <div class="chart-table" id="dailyTable" hidden></div>
+    </div>
+
+    <div class="grid-2">
+        <div class="card list-card">
+            <div class="card-head">
+                <div>
+                    <h2>Most blocked domains</h2>
+                    <p class="muted">Where the blocked requests were going</p>
+                </div>
+            </div>
+            <ol class="rank" id="topDomains"></ol>
+        </div>
+        <div class="card list-card">
+            <div class="card-head">
+                <div>
+                    <h2>Sites with the most blocking</h2>
+                    <p class="muted">Websites you visited, by requests blocked</p>
+                </div>
+            </div>
+            <ol class="rank" id="topSites"></ol>
+        </div>
+    </div>
+
+    <div class="card summary-card" id="protectionSummary">
+        <a href="#protection" class="summary-item">
+            <span class="summary-icon"><span class="icon" data-icon="shield-check"></span></span>
+            <span><strong id="sumLevel">Standard</strong><span class="muted">Default protection</span></span>
+        </a>
+        <a href="#lists" class="summary-item">
+            <span class="summary-icon"><span class="icon" data-icon="layers"></span></span>
+            <span><strong id="sumLists">0 lists</strong><span class="muted" id="sumRules">0 rules</span></span>
+        </a>
+        <a href="#sites" class="summary-item">
+            <span class="summary-icon"><span class="icon" data-icon="globe"></span></span>
+            <span><strong id="sumSites">0 sites</strong><span class="muted">With their own setting</span></span>
+        </a>
+        <a href="#filters" class="summary-item">
+            <span class="summary-icon"><span class="icon" data-icon="code"></span></span>
+            <span><strong id="sumFilters">0 filters</strong><span class="muted">Created by you</span></span>
+        </a>
+    </div>
+</section>
+
+<!-- Protection ----------------------------------------------------------- -->
+<section class="page" data-page="protection" hidden>
+    <header class="page-head">
+        <div>
+            <h1>Protection</h1>
+            <p class="muted">How hard Aegis works on the sites you visit.</p>
+        </div>
+    </header>
+
+    <div class="card section">
+        <h2>Default protection level</h2>
+        <p class="muted">Used on every site, unless you pick another level for a specific site from the toolbar popup or <a href="#sites">Site settings</a>.</p>
+        <div class="level-cards" id="levelCards" role="radiogroup" aria-label="Default protection level"></div>
+    </div>
+
+    <div class="card section">
+        <h2>Behavior</h2>
+        <div class="rows">
+            <label class="row">
+                <span class="row-icon"><span class="icon" data-icon="shield-alert"></span></span>
+                <span class="row-text"><strong>Warn me before opening dangerous sites</strong><span class="muted">Shows a warning page instead of loading sites known for malware, scams or phishing.</span></span>
+                <span class="switch"><input type="checkbox" id="optStrictBlock"><span></span></span>
+            </label>
+            <label class="row">
+                <span class="row-icon"><span class="icon" data-icon="overlay"></span></span>
+                <span class="row-text"><strong>Block pop-up ads</strong><span class="muted">Closes new tabs and windows that ads open behind your back.</span></span>
+                <span class="switch"><input type="checkbox" id="optPopupBlock"><span></span></span>
+            </label>
+            <label class="row">
+                <span class="row-icon"><span class="icon" data-icon="chart"></span></span>
+                <span class="row-text"><strong>Show the blocked count on the toolbar icon</strong><span class="muted">The number of requests blocked on the current page.</span></span>
+                <span class="switch"><input type="checkbox" id="optBadge"><span></span></span>
+            </label>
+            <label class="row">
+                <span class="row-icon"><span class="icon" data-icon="refresh"></span></span>
+                <span class="row-text"><strong>Reload the page after changing its protection</strong><span class="muted">So that the new level takes effect right away.</span></span>
+                <span class="switch"><input type="checkbox" id="optAutoReload"><span></span></span>
+            </label>
+        </div>
+    </div>
+
+    <div class="card section">
+        <div class="section-head">
+            <div>
+                <h2>Keyboard shortcuts</h2>
+                <p class="muted">Act on the current tab without opening the popup.</p>
+            </div>
+            <button class="btn sm" id="editShortcuts" type="button"><span class="icon sm" data-icon="keyboard"></span>Customize</button>
+        </div>
+        <ul class="shortcuts" id="shortcutList"></ul>
+    </div>
+</section>
+
+<!-- Filter lists --------------------------------------------------------- -->
+<section class="page" data-page="lists" hidden>
+    <header class="page-head">
+        <div>
+            <h1>Filter lists</h1>
+            <p class="muted" id="listsSummary">&nbsp;</p>
+        </div>
+        <div class="page-actions">
+            <span class="save-state" id="listsSaveState" aria-live="polite"></span>
+            <div class="search-field">
+                <span class="icon sm" data-icon="search"></span>
+                <input class="input" id="listsSearch" type="search" placeholder="Search lists" spellcheck="false">
+            </div>
+        </div>
+    </header>
+    <div class="callout danger" id="listsError" hidden><span class="icon" data-icon="alert"></span><div></div></div>
+    <div id="listGroups"></div>
+
+    <div class="card section">
+        <h2>Add a list from the web</h2>
+        <p class="muted">Paste the address of any filter list in AdBlock / uBlock Origin format, for example from <a href="https://filterlists.com/" target="_blank" rel="noopener">filterlists.com</a>.</p>
+        <form class="inline-form" id="importListForm">
+            <input class="input" type="url" id="importListURL" placeholder="https://example.com/filters.txt" spellcheck="false" required>
+            <button class="btn primary" type="submit"><span class="icon sm" data-icon="plus"></span>Add list</button>
+        </form>
+        <p class="hint" id="importedUserScripts" hidden>Network filters of added lists always work. Their cosmetic filters need the <strong>Allow User Scripts</strong> switch on the browser's details page for Aegis.</p>
+        <p class="hint" id="importedHint" hidden>Added lists are refreshed automatically. <button class="link" type="button" id="updateImported">Update them now</button></p>
+    </div>
+</section>
+
+<!-- Site settings -------------------------------------------------------- -->
+<section class="page" data-page="sites" hidden>
+    <header class="page-head">
+        <div>
+            <h1>Site settings</h1>
+            <p class="muted">Sites listed here use their own protection level. All other sites use your default (<span id="sitesDefaultName">Standard</span>).</p>
+        </div>
+    </header>
+
+    <div class="card section">
+        <form class="inline-form" id="addSiteForm">
+            <input class="input" id="addSiteInput" placeholder="example.com" spellcheck="false" autocomplete="off" required>
+            <select class="select" id="addSiteLevel" aria-label="Protection level">
+                <option value="0">Off (trusted site)</option>
+                <option value="1">Basic</option>
+                <option value="2">Standard</option>
+                <option value="3">Strict</option>
+            </select>
+            <button class="btn primary" type="submit"><span class="icon sm" data-icon="plus"></span>Add site</button>
+        </form>
+        <div class="toolbar">
+            <div class="seg small" id="sitesFilter" role="group" aria-label="Show">
+                <button type="button" data-value="all">All</button>
+                <button type="button" data-value="0">Trusted</button>
+                <button type="button" data-value="custom">Custom level</button>
+            </div>
+            <div class="search-field">
+                <span class="icon sm" data-icon="search"></span>
+                <input class="input" id="sitesSearch" type="search" placeholder="Find a site" spellcheck="false">
+            </div>
+        </div>
+        <ul class="site-list" id="siteList"></ul>
+        <div class="empty-state" id="sitesEmpty" hidden>
+            <span class="icon lg" data-icon="globe"></span>
+            <strong>No site-specific settings yet</strong>
+            <span class="muted">Turn protection off for a site from the toolbar popup, or add one above.</span>
+        </div>
+    </div>
+</section>
+
+<!-- My filters ----------------------------------------------------------- -->
+<section class="page" data-page="filters" hidden>
+    <header class="page-head">
+        <div>
+            <h1>My filters</h1>
+            <p class="muted">Your own blocking rules, and the elements you hid with the element picker.</p>
+        </div>
+    </header>
+
+    <div class="card section">
+        <div class="section-head">
+            <div>
+                <h2>Hidden elements</h2>
+                <p class="muted">Created with <strong>Hide</strong> in the toolbar popup.</p>
+            </div>
+        </div>
+        <div id="hiddenElements"></div>
+        <div class="empty-state" id="hiddenEmpty" hidden>
+            <span class="icon lg" data-icon="crosshair"></span>
+            <strong>Nothing hidden yet</strong>
+            <span class="muted">Open the popup on any site, click <b>Hide</b>, then click the element you never want to see again.</span>
+        </div>
+    </div>
+
+    <div class="card section">
+        <div class="section-head">
+            <div>
+                <h2>Custom filter rules</h2>
+                <p class="muted">Write filters in uBlock Origin syntax, one per line. Lines starting with <code>!</code> are comments.</p>
+            </div>
+            <div class="section-actions">
+                <button class="btn sm ghost" id="filtersImport" type="button" title="Append filters from a file"><span class="icon sm" data-icon="upload"></span>Import</button>
+                <button class="btn sm ghost" id="filtersExport" type="button" title="Save filters to a file"><span class="icon sm" data-icon="download"></span>Export</button>
+                <input type="file" id="filtersImportFile" accept=".txt,text/plain" hidden>
+            </div>
+        </div>
+        <div class="callout warn" id="userScriptsCallout" hidden>
+            <span class="icon" data-icon="info"></span>
+            <div>Network filters (<code>||…^</code>) always work. Cosmetic filters (<code>##…</code>) and scriptlets (<code>##+js(…)</code>) written here also need the <strong>Allow User Scripts</strong> switch, on the browser's details page for Aegis. <button class="link" type="button" id="openExtDetails">Open it</button> <span class="muted">To simply hide something, the <b>Hide</b> tool of the popup works without it.</span></div>
+        </div>
+        <div class="editor" id="filterEditor">
+            <div class="editor-gutter" aria-hidden="true"></div>
+            <textarea id="filterText" spellcheck="false" autocomplete="off" autocapitalize="off" wrap="off" aria-label="Custom filters" placeholder="! Examples&#10;||ads.example.com^&#10;example.com##.sidebar-ad&#10;@@||example.org^$document"></textarea>
+        </div>
+        <div class="editor-bar">
+            <span class="muted" id="filterCount">0 filters</span>
+            <div class="editor-actions">
+                <button class="btn ghost" id="filtersRevert" type="button" disabled>Revert</button>
+                <button class="btn primary" id="filtersSave" type="button" disabled><span class="icon sm" data-icon="check"></span>Save &amp; apply</button>
+            </div>
+        </div>
+        <details class="cheatsheet">
+            <summary>Filter syntax cheat sheet</summary>
+            <table>
+                <tbody>
+                    <tr><td><code>||ads.example.com^</code></td><td>Block everything from a domain</td></tr>
+                    <tr><td><code>||example.com/banner/*</code></td><td>Block addresses matching a pattern</td></tr>
+                    <tr><td><code>example.com##.promo-box</code></td><td>Hide an element on one site (CSS selector, needs User Scripts)</td></tr>
+                    <tr><td><code>##.cookie-popup</code></td><td>Hide an element on every site (needs User Scripts)</td></tr>
+                    <tr><td><code>@@||example.com^</code></td><td>Never block this domain</td></tr>
+                    <tr><td><code>example.com##+js(set-constant, adsEnabled, false)</code></td><td>Run a uBlock Origin scriptlet (needs User Scripts)</td></tr>
+                </tbody>
+            </table>
+            <p class="muted">Full reference: <a href="https://github.com/gorhill/uBlock/wiki/Static-filter-syntax" target="_blank" rel="noopener">uBlock Origin static filter syntax</a>.</p>
+        </details>
+    </div>
+</section>
+
+<!-- Activity ------------------------------------------------------------- -->
+<section class="page" data-page="activity" hidden>
+    <header class="page-head">
+        <div>
+            <h1>Activity</h1>
+            <p class="muted">Live view of what Aegis blocks, as it happens.</p>
+        </div>
+        <div class="page-actions">
+            <button class="btn sm" id="activityFreeze" type="button" aria-pressed="false"><span class="icon sm" data-icon="pause"></span><span>Pause</span></button>
+            <button class="btn sm ghost" id="activityClear" type="button"><span class="icon sm" data-icon="trash"></span>Clear</button>
+        </div>
+    </header>
+    <div class="callout warn" id="activityNotLive" hidden>
+        <span class="icon" data-icon="info"></span>
+        <div>The activity log needs Aegis to be loaded as an unpacked extension (developer mode), which is how the build in this folder is meant to be used.</div>
+    </div>
+    <div class="card activity-card">
+        <div class="toolbar">
+            <select class="select" id="activityTab" aria-label="Tab"></select>
+            <div class="chips" id="activityKinds" role="group" aria-label="Show">
+                <button type="button" class="chip-toggle" data-kind="blocked" aria-pressed="true"><span class="dot" style="background:var(--danger)"></span>Blocked</button>
+                <button type="button" class="chip-toggle" data-kind="cleaned" aria-pressed="true"><span class="dot cleaned"></span>Cleaned</button>
+                <button type="button" class="chip-toggle" data-kind="allowed" aria-pressed="false"><span class="dot" style="background:var(--accent)"></span>Allowed</button>
+                <button type="button" class="chip-toggle" data-kind="other" aria-pressed="false"><span class="dot" style="background:var(--text-3)"></span>Modified</button>
+            </div>
+            <div class="search-field grow">
+                <span class="icon sm" data-icon="search"></span>
+                <input class="input" id="activitySearch" type="search" placeholder="Filter by address or list" spellcheck="false">
+            </div>
+        </div>
+        <div class="log-wrap">
+            <table class="log">
+                <thead>
+                    <tr><th class="c-time">Time</th><th class="c-action">Action</th><th class="c-type">Type</th><th>Address</th><th class="c-list">Matched list</th></tr>
+                </thead>
+                <tbody id="activityRows"></tbody>
+            </table>
+            <div class="empty-state" id="activityEmpty">
+                <span class="icon lg" data-icon="activity"></span>
+                <strong>Waiting for activity…</strong>
+                <span class="muted">Browse the web and blocked requests will show up here in real time.</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Settings ------------------------------------------------------------- -->
+<section class="page" data-page="settings" hidden>
+    <header class="page-head">
+        <div>
+            <h1>Settings</h1>
+            <p class="muted">Appearance, statistics and backups.</p>
+        </div>
+    </header>
+
+    <div class="card section">
+        <h2>Appearance</h2>
+        <div class="rows">
+            <div class="row">
+                <span class="row-icon"><span class="icon" data-icon="moon"></span></span>
+                <span class="row-text"><strong>Theme</strong><span class="muted">Applies to the popup and this dashboard.</span></span>
+                <div class="seg small" id="themeSeg" role="group" aria-label="Theme">
+                    <button type="button" data-value="auto">Auto</button>
+                    <button type="button" data-value="light">Light</button>
+                    <button type="button" data-value="dark">Dark</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card section">
+        <h2>Backup &amp; restore</h2>
+        <p class="muted">Save your lists, site settings and filters to a file, to restore them later or on another computer.</p>
+        <div class="button-row">
+            <button class="btn" id="backupButton" type="button"><span class="icon sm" data-icon="download"></span>Back up to a file</button>
+            <button class="btn" id="restoreButton" type="button"><span class="icon sm" data-icon="upload"></span>Restore from a file</button>
+            <input type="file" id="restoreFile" accept="application/json,.json" hidden>
+        </div>
+    </div>
+
+    <div class="card section danger-zone">
+        <h2>Reset</h2>
+        <div class="rows">
+            <div class="row">
+                <span class="row-text"><strong>Reset statistics</strong><span class="muted">Sets all counters on the Overview back to zero.</span></span>
+                <button class="btn danger-ghost" id="resetStats" type="button">Reset statistics</button>
+            </div>
+            <div class="row">
+                <span class="row-text"><strong>Restore default settings</strong><span class="muted">Removes your site settings, custom filters and list choices.</span></span>
+                <button class="btn danger-ghost" id="resetAll" type="button">Restore defaults</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About ---------------------------------------------------------------- -->
+<section class="page" data-page="about" hidden>
+    <div class="about-hero card">
+        <img src="img/logo.svg" alt="" width="72" height="72">
+        <div>
+            <h1>Aegis</h1>
+            <p class="muted">Version <span id="aboutVersion"></span></p>
+            <p>A friendly ad &amp; tracker blocker built on the engine of <a href="https://github.com/gorhill/uBlock" target="_blank" rel="noopener">uBlock Origin Lite</a>.</p>
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="card section">
+            <h2>How Aegis blocks</h2>
+            <ul class="how">
+                <li><span class="icon" data-icon="shield"></span><div><strong>Network rules</strong><span class="muted">Filter lists are compiled into rules the browser enforces itself, before a request leaves your computer. Fast, private, and nothing runs on each request.</span></div></li>
+                <li><span class="icon" data-icon="eye-off"></span><div><strong>Cosmetic filtering</strong><span class="muted">Hides the empty boxes and banners left behind on the page.</span></div></li>
+                <li><span class="icon" data-icon="wrench"></span><div><strong>Scriptlets</strong><span class="muted">Small fixes injected into pages to defuse anti-adblock walls and video ads.</span></div></li>
+            </ul>
+        </div>
+        <div class="card section">
+            <h2>Credits</h2>
+            <ul class="credits">
+                <li>Blocking engine: <a href="https://github.com/gorhill/uBlock" target="_blank" rel="noopener">uBlock Origin Lite</a> by Raymond Hill and contributors (GPLv3)</li>
+                <li>Filter lists: <a href="https://github.com/uBlockOrigin/uAssets" target="_blank" rel="noopener">uBlock filters</a>, <a href="https://easylist.to/" target="_blank" rel="noopener">EasyList &amp; EasyPrivacy</a>, <a href="https://pgl.yoyo.org/adservers/" target="_blank" rel="noopener">Peter Lowe</a>, <a href="https://urlhaus.abuse.ch/" target="_blank" rel="noopener">URLhaus</a>, AdGuard and regional list authors</li>
+                <li>Font: <a href="https://github.com/rsms/inter" target="_blank" rel="noopener">Inter</a> by Rasmus Andersson</li>
+                <li>Flags: <a href="https://flagpedia.net/" target="_blank" rel="noopener">Flags of the World</a></li>
+            </ul>
+            <p class="muted small">Aegis is free software, distributed under the GNU General Public License v3.</p>
+        </div>
+    </div>
+
+    <div class="card section">
+        <div class="section-head">
+            <div>
+                <h2>Troubleshooting information</h2>
+                <p class="muted">Technical details about your setup, useful when asking for help.</p>
+            </div>
+            <button class="btn sm" id="copyDiagnostics" type="button"><span class="icon sm" data-icon="copy"></span>Copy</button>
+        </div>
+        <pre class="diagnostics" id="diagnostics">Loading…</pre>
+    </div>
+</section>
+
+</main>
+</div>
+
+<!-- Confirmation dialog -->
+<dialog class="dialog" id="confirmDialog" aria-labelledby="confirmTitle" aria-describedby="confirmText">
+    <form method="dialog">
+        <h2 id="confirmTitle"></h2>
+        <p class="muted" id="confirmText"></p>
+        <div class="dialog-actions">
+            <button class="btn ghost" value="cancel" type="submit">Cancel</button>
+            <button class="btn danger" value="ok" type="submit" id="confirmOk">Confirm</button>
+        </div>
+    </form>
+</dialog>
+
+<div class="tooltip" id="chartTooltip" role="tooltip" hidden></div>
+
+<script src="js/aegis/dashboard/main.js" type="module"></script>
+</body>
+</html>
