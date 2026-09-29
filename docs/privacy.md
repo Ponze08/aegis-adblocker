@@ -55,6 +55,14 @@ Aegis does not transfer browsing activity to advertisers, data brokers, or other
 
 Aegis does not permit humans to read users' browsing data through an Aegis-operated service because Aegis does not operate a server that receives that browsing data.
 
+## Chrome Web Store Limited Use
+
+Aegis uses information obtained through browser permissions only to provide or improve its disclosed content-blocking and related user-facing features.
+
+The use of information received from Google APIs will adhere to the Chrome Web Store User Data Policy, including the Limited Use requirements.
+
+Aegis does not use or transfer this information for personalized advertising, creditworthiness, data brokerage, or unrelated purposes.
+
 ## Analytics and telemetry
 
 Aegis contains no analytics SDK and no telemetry service. The extension does not send usage analytics or browsing statistics to Aegis-operated servers.
