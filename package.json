@@ -12,6 +12,9 @@
     "build": "node scripts/build.mjs",
     "build:ui": "node scripts/build.mjs --ui",
     "build:fresh": "node scripts/build.mjs --fresh",
+    "build:store": "node scripts/build-store.mjs",
+    "build:store:fresh": "node scripts/build-store.mjs --fresh",
+    "check:store": "node scripts/check-store.mjs",
     "icons": "node scripts/make-icons.mjs",
     "test": "node scripts/smoke-test.mjs",
     "test:edge": "node scripts/smoke-test.mjs --edge"
