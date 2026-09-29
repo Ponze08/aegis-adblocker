@@ -1,5 +1,5 @@
 {
- "extName": { "message": "Aegis" },
- "extShortDesc": { "message": "A fast, friendly ad & tracker blocker powered by the uBlock Origin engine." },
+ "extName": { "message": "Aegis – Ad & Tracker Blocker" },
+ "extShortDesc": { "message": "A fast, privacy-focused ad and tracker blocker powered by the uBlock Origin Lite filtering engine." },
  "ag_cmdToggleSite": { "message": "Turn protection on/off for the current site" }
 }
