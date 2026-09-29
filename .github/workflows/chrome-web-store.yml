@@ -1,0 +1,51 @@
+name: Chrome Web Store build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - chrome-web-store
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  build-store:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Aegis
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Check out pinned uBlock Origin source
+        run: |
+          git clone --filter=blob:none https://github.com/gorhill/uBlock.git ../uBlock
+          git -C ../uBlock checkout d34727edfeef5ada28807edebe43073ced1142e9
+
+      - name: Build Chrome Web Store artifact
+        run: npm run build:store:fresh
+
+      - name: Validate Chrome Web Store artifact
+        run: npm run check:store
+
+      - name: Create upload ZIP
+        run: |
+          cd dist/aegis-store
+          zip -qr ../aegis-chrome-web-store.zip .
+
+      - name: Upload Chrome Web Store ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: aegis-chrome-web-store
+          path: dist/aegis-chrome-web-store.zip
+          if-no-files-found: error
+          retention-days: 30
