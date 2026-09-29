@@ -32,7 +32,22 @@ jobs:
           git -C ../uBlock checkout d34727edfeef5ada28807edebe43073ced1142e9
 
       - name: Build Chrome Web Store artifact
-        run: npm run build:store:fresh
+        shell: bash
+        run: |
+          # A clean runner has no filter cache, so build:store already downloads
+          # current lists on its first run. Keep partial downloads between retries
+          # instead of using --fresh, which would delete them again.
+          for attempt in 1 2 3; do
+            if npm run build:store; then
+              exit 0
+            fi
+            if [ "$attempt" -eq 3 ]; then
+              echo "Chrome Web Store build failed after 3 attempts" >&2
+              exit 1
+            fi
+            echo "Build attempt $attempt failed; retrying after 20 seconds..." >&2
+            sleep 20
+          done
 
       - name: Validate Chrome Web Store artifact
         run: npm run check:store
