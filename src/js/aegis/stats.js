@@ -22,6 +22,7 @@ import {
 
 import { dnr } from '../ext-compat.js';
 import { rulesetConfig } from '../config.js';
+import { countMatchedRulesForTab } from './lib/matched-rules.js';
 
 /******************************************************************************/
 
@@ -504,17 +505,14 @@ browser.tabs.onReplaced?.addListener((addedTabId, removedTabId) => {
 // Fallback when live matches are not available: count matched rules
 
 async function tabStatsFromMatchedRules(tabId) {
-    const out = newTabStats();
-    if ( typeof dnr.getMatchedRules !== 'function' ) { return out; }
-    const details = await dnr.getMatchedRules({ tabId }).catch(( ) => undefined);
-    for ( const { rule } of details?.rulesMatchedInfo ?? [] ) {
-        const kind = await ruleKind(rule.rulesetId, rule.ruleId);
-        if ( kind === 'clean' ) { out.cleaned += 1; continue; }
-        if ( kind !== 'block' && kind !== 'redirect' && kind !== 'strictblock' ) { continue; }
-        out.blocked += 1;
-        out.cats[categorize(kind, rule.rulesetId, '')] += 1;
-    }
-    return out;
+    return countMatchedRulesForTab(
+        tabId,
+        typeof dnr.getMatchedRules === 'function'
+            ? dnr.getMatchedRules.bind(dnr)
+            : undefined,
+        ruleKind,
+        categorize
+    );
 }
 
 /******************************************************************************/
@@ -522,13 +520,27 @@ async function tabStatsFromMatchedRules(tabId) {
 export async function getTabStats(tabId) {
     await ready;
     await processing;
-    const tab = LIVE ? tabs.get(tabId) ?? newTabStats() : await tabStatsFromMatchedRules(tabId);
+    let tab;
+    let available = true;
+    if ( LIVE ) {
+        tab = tabs.get(tabId) ?? newTabStats();
+    } else {
+        try {
+            tab = await tabStatsFromMatchedRules(tabId);
+        } catch (reason) {
+            // A quota/permission error must never masquerade as "0 blocked".
+            console.warn('[aegis] Blocked-request count unavailable:', reason);
+            available = false;
+            tab = newTabStats();
+        }
+    }
     const domains = Object.entries(tab.domains)
         .map(([ domain, [ count, category ] ]) => ({ domain, count, category }))
         .sort((a, b) => b.count - a.count);
     return {
         live: LIVE,
-        blocked: tab.blocked,
+        available,
+        blocked: available ? tab.blocked : null,
         cleaned: tab.cleaned,
         cats: tab.cats,
         domains,
