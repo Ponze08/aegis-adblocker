@@ -14,6 +14,7 @@ Build:
 ```bash
 npm run build:store:fresh
 npm run check:store
+npm run test:stats
 ```
 
 The store-ready extension is written to:
@@ -72,11 +73,11 @@ Features include:
 - custom filters and optional custom filter-list URLs;
 - timed global pause and automatic resume;
 - import/export and local extension settings;
-- a current-tab blocking count when supported by Chrome's user-granted tab access.
+- an on-demand, current-tab blocked-request snapshot (with a Refresh button), when Chrome grants access to matched rules. An unavailable count is labeled unavailable rather than displayed as zero.
 
 Aegis performs filtering locally in the browser. It contains no analytics or telemetry and does not upload browsing history to Aegis-operated servers.
 
-The Chrome Web Store build intentionally omits Chrome's unpacked-only `declarativeNetRequestFeedback` debugging permission. As a result, detailed live request logging and long-term live-match statistics that depend on that debugging API are not available in the Web Store build.
+The Chrome Web Store build intentionally omits Chrome's unpacked-only `declarativeNetRequestFeedback` debugging permission. As a result, detailed live request logging, lifetime/today totals and long-term live-match statistics that depend on that debugging API are not available in the Web Store build. The popup queries `getMatchedRules()` once on open, or after the user clicks Refresh; it does not poll in the Store build. Counts require user-granted `activeTab` access and may be unavailable due to API restrictions, permissions or quota. A zero means a successful query with no blocking matches.
 
 Aegis is an independent GPLv3 project built using the uBlock Origin Lite engine by Raymond Hill and contributors. The source code is publicly available in this repository.
 
@@ -179,7 +180,9 @@ Do not use an unpacked-build Activity Log screenshot to advertise the Chrome Web
 ## Before submitting
 
 - Build `npm run build:store:fresh`.
-- Run `npm run check:store`.
+- Run `npm run check:store` and `npm run test:stats`.
+- In **Google Chrome**, verify the store-build popup count on a page with ads, click Refresh, and confirm unavailable queries never show false zeroes.
+- Verify the Store popup does not show global today/all-time zeros or debug-only per-domain details.
 - Test `dist/aegis-store` with **Load unpacked** in Chrome.
 - Verify blocking, popup controls, protection levels, site settings, custom filters, pause/resume, and filter-list management.
 - Confirm the Store build's manifest does not contain `declarativeNetRequestFeedback` or `webNavigation`.
