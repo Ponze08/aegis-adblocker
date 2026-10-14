@@ -39,6 +39,7 @@ async function main() {
 
     const required = [
         'popup.html',
+        'js/aegis/lib/matched-rules.js',
         'dashboard.html',
         'welcome.html',
         'img/icon_128.png',
