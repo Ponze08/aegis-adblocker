@@ -238,6 +238,7 @@ async function refreshStats() {
 async function refreshGlobal() {
     const stats = await send('aegis:stats');
     if ( stats instanceof Object === false ) { return; }
+    state.live = stats.live === true;
     $('#globalCounts').hidden = stats.live !== true;
     if ( stats.live !== true ) { return; }
     animateNumber($('#totalBlocked'), stats.total, { format: compact });
