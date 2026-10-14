@@ -18,7 +18,7 @@ The unpacked/development build can use Chrome's debug-only rule-match API for de
 
 ## What you get
 
-- **Popup:** one big shield turns protection on or off for the current site. It shows the current tab's blocked-request count when the browser makes that information available, plus a 4-step protection level (Off, Basic, Standard, Strict), the Zap / Hide / Unhide element tools, and a "Site broken?" helper.
+- **Popup:** one big shield turns protection on or off for the current site. It shows the current tab's blocked-request count when the browser makes that information available (on-demand snapshots with Refresh in the Store build), plus a 4-step protection level (Off, Basic, Standard, Strict), the Zap / Hide / Unhide element tools, and a "Site broken?" helper.
 - **Pause everywhere** for 15 minutes, 1 hour, or until you resume. Resumes automatically, and your site settings are kept.
 - **Dashboard:**
   - **Overview:** filtering configuration plus detailed today / week / all-time statistics in builds where live rule-match information is available.
@@ -53,6 +53,7 @@ This copies the uBO Lite engine, overlays the Aegis UI from `src/`, downloads th
 | `npm run build:store` | Build `dist/aegis-store`, removing unpacked-only permissions |
 | `npm run build:store:fresh` | Fresh-filter Chrome Web Store build |
 | `npm run check:store` | Validate the Web Store artifact and manifest |
+| `npm run test:stats` | Test matched-rule counting, quota and permission failures |
 | `npm test` / `npm run test:edge` | Headless end-to-end check against real websites |
 | `npm run icons` | Re-renders `src/img` icons from the SVG in `scripts/make-icons.mjs` |
 
@@ -60,7 +61,7 @@ Filter lists are compiled into the extension, as required by Manifest V3. To get
 
 ## Chrome Web Store
 
-The Store-specific build is created in `dist/aegis-store`. It removes `declarativeNetRequestFeedback` and `webNavigation`, which Aegis uses only for detailed unpacked-build statistics, and forces the statistics module onto its packed-extension fallback.
+The Store-specific build is created in `dist/aegis-store`. It removes `declarativeNetRequestFeedback` and `webNavigation`, which Aegis uses only for detailed unpacked-build statistics, and forces the statistics module onto its packed-extension fallback. The Store popup does not poll matched rules; it offers on-demand Refresh, distinguishes unavailable counts from true zero, and omits unsupported global totals.
 
 Submission text, permission justifications, privacy guidance, ZIP instructions, and the reviewer note are in [`docs/chrome-web-store.md`](docs/chrome-web-store.md). The privacy policy is in [`docs/privacy.md`](docs/privacy.md).
 
