@@ -47,6 +47,7 @@ const RESTRICTED_HOSTS = new Set([
 ]);
 
 let levelSeg;
+let lastAvailableStats = null;
 
 /******************************************************************************/
 
@@ -133,39 +134,66 @@ function renderLevel() {
 /******************************************************************************/
 
 function renderStats(stats) {
-    if ( stats instanceof Object === false ) { return; }
+    if ( stats instanceof Object === false || typeof stats.live !== 'boolean' ) {
+        stats = { live: state.live, available: false };
+    }
     state.live = stats.live;
-    animateNumber($('#blockedCount'), stats.blocked, { format: compact });
+    $('#refreshCount').hidden = state.live;
+
+    const available = stats.available !== false && typeof stats.blocked === 'number';
+    if ( available ) { lastAvailableStats = stats; }
+    const shown = available ? stats : lastAvailableStats ?? {
+        blocked: null,
+        cleaned: 0,
+        cats: { ads: 0, trackers: 0, malware: 0, annoyances: 0 },
+        domains: [],
+    };
+    const count = $('#blockedCount');
+    if ( available ) {
+        animateNumber(count, shown.blocked, { format: compact });
+    } else {
+        cancelAnimationFrame(Number(count.dataset.raf ?? 0));
+        count.textContent = shown.blocked === null ? '—' : compact(shown.blocked);
+        if ( shown.blocked === null ) { count.dataset.value = '0'; }
+    }
+    $('#blockedLabel').textContent = available
+        ? 'blocked on this page'
+        : shown.blocked === null ? 'count unavailable' : 'last known on this page';
 
     const bar = $('#catbar');
     const legend = $('#legend');
-    const present = CATEGORY_ORDER.filter(cat => stats.cats[cat] > 0);
+    const present = CATEGORY_ORDER.filter(cat => shown.cats[cat] > 0);
     bar.replaceChildren(...present.map(cat => {
         const span = document.createElement('span');
         span.className = cat;
-        span.style.flexGrow = `${stats.cats[cat]}`;
+        span.style.flexGrow = `${shown.cats[cat]}`;
         return span;
     }));
     bar.setAttribute('aria-label', present.map(cat =>
-        `${CATEGORY_META[cat].label}: ${stats.cats[cat]}`
+        `${CATEGORY_META[cat].label}: ${shown.cats[cat]}`
     ).join(', ') || 'Nothing blocked');
 
     const items = present.map(cat => {
         const li = document.createElement('li');
         li.innerHTML = `<span class="dot ${cat}"></span><b class="num"></b>`;
-        li.querySelector('b').textContent = fmt(stats.cats[cat]);
+        li.querySelector('b').textContent = fmt(shown.cats[cat]);
         li.append(CATEGORY_META[cat].label);
         return li;
     });
-    if ( stats.cleaned > 0 ) {
+    if ( shown.cleaned > 0 ) {
         const li = document.createElement('li');
         li.title = 'Tracking parameters removed from links';
         li.innerHTML = '<span class="dot cleaned"></span><b class="num"></b>';
-        li.querySelector('b').textContent = fmt(stats.cleaned);
-        li.append(stats.cleaned === 1 ? 'Link cleaned' : 'Links cleaned');
+        li.querySelector('b').textContent = fmt(shown.cleaned);
+        li.append(shown.cleaned === 1 ? 'Link cleaned' : 'Links cleaned');
         items.push(li);
     }
-    if ( items.length === 0 ) {
+    if ( available === false ) {
+        const li = document.createElement('li');
+        li.className = 'empty';
+        li.textContent = 'Count could not be refreshed. Try Refresh.';
+        items.unshift(li);
+    } else if ( items.length === 0 ) {
         const li = document.createElement('li');
         li.className = 'empty';
         li.textContent = state.level === 0
@@ -176,8 +204,12 @@ function renderStats(stats) {
     legend.replaceChildren(...items);
 
     const toggle = $('#detailsToggle');
-    toggle.hidden = stats.domains.length === 0 && state.live;
-    renderDomains(stats.domains);
+    toggle.hidden = state.live === false || shown.domains.length === 0;
+    if ( toggle.hidden ) {
+        $('#details').hidden = true;
+        toggle.setAttribute('aria-expanded', 'false');
+    }
+    renderDomains(shown.domains);
 }
 
 function renderDomains(domains) {
@@ -206,6 +238,8 @@ async function refreshStats() {
 async function refreshGlobal() {
     const stats = await send('aegis:stats');
     if ( stats instanceof Object === false ) { return; }
+    $('#globalCounts').hidden = stats.live !== true;
+    if ( stats.live !== true ) { return; }
     animateNumber($('#totalBlocked'), stats.total, { format: compact });
     animateNumber($('#todayBlocked'), stats.today, { format: compact });
 }
@@ -320,6 +354,15 @@ function runTool(files) {
 }
 
 function setupEvents() {
+    $('#refreshCount').addEventListener('click', async ev => {
+        const button = ev.currentTarget;
+        button.disabled = true;
+        try {
+            await refreshStats();
+        } finally {
+            button.disabled = false;
+        }
+    });
     $('#orb').addEventListener('click', ( ) => {
         if ( state.paused ) { return setPaused(null); }
         if ( state.level !== 0 ) { return changeLevel(0); }
@@ -441,6 +484,11 @@ async function init() {
         state.hostname === '' ||
         RESTRICTED_HOSTS.has(state.hostname);
 
+    // Start the snapshot promptly after the user opens the popup.
+    const firstTabStats = state.na
+        ? Promise.resolve(undefined)
+        : send('aegis:tabStats', { tabId: tab.id });
+
     const [ panelData, pauseState, defaultLevel ] = await Promise.all([
         state.na ? undefined : send('popupPanelData', { origin: url.origin, hostname: state.hostname }),
         send('aegis:pauseState'),
@@ -466,15 +514,17 @@ async function init() {
 
     renderStatus();
     renderLevel();
-    await refreshStats();
+    if ( state.na === false ) { renderStats(await firstTabStats); }
     document.body.classList.remove('loading');
 
-    // Live updates while the popup is open
+    // Do not poll getMatchedRules in the Store build (20 calls / 10 minutes).
+    if ( state.live ) {
+        setInterval(refreshStats, 1000);
+        setInterval(refreshGlobal, 5000);
+    }
     setInterval(( ) => {
-        refreshStats();
         if ( state.paused && state.pauseUntil ) { renderStatus(); }
     }, 1000);
-    setInterval(refreshGlobal, 5000);
 }
 
 init().catch(reason => {
