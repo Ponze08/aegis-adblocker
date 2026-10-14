@@ -265,6 +265,9 @@ body.changed .orb-core .icon {
 .link-btn:hover {
     background: var(--accent-soft);
 }
+.link-btn[hidden], .bottom[hidden] {
+    display: none;
+}
 .link-btn .icon {
     transition: transform .2s var(--ease);
 }
@@ -279,6 +282,12 @@ body.changed .orb-core .icon {
     align-items: flex-end;
     justify-content: space-between;
     gap: 8px;
+}
+.stats-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
 }
 .big {
     display: flex;
