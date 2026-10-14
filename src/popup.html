@@ -51,9 +51,12 @@
                 <span id="blockedCount">0</span>
                 <span class="big-label" id="blockedLabel">blocked on this page</span>
             </div>
-            <button class="link-btn" id="detailsToggle" type="button" aria-expanded="false" aria-controls="details">
-                Details<span class="icon xs" data-icon="chevron-down"></span>
-            </button>
+            <div class="stats-actions">
+                <button class="link-btn" id="refreshCount" type="button" title="Refresh the blocked-request count" hidden>Refresh</button>
+                <button class="link-btn" id="detailsToggle" type="button" aria-expanded="false" aria-controls="details">
+                    Details<span class="icon xs" data-icon="chevron-down"></span>
+                </button>
+            </div>
         </div>
         <div class="catbar" id="catbar" role="img"></div>
         <ul class="legend" id="legend"></ul>
@@ -123,7 +126,7 @@
     </section>
 </main>
 
-<footer class="bottom">
+<footer class="bottom" id="globalCounts" hidden>
     <span class="lifetime"><span class="icon xs" data-icon="shield-check"></span><b class="num" id="totalBlocked">0</b>&nbsp;blocked in total<span class="sep">·</span><span class="num" id="todayBlocked">0</span>&nbsp;today</span>
 </footer>
 
