@@ -1,12 +1,26 @@
 # Aegis
 
+**[Install Aegis from the Chrome Web Store](https://chromewebstore.google.com/detail/jcicjjichpkfanfpphceppgjkgoimbco)** (official published extension).
+
 A fast, friendly ad & tracker blocker for Chrome and Edge. It blocks as well as uBlock Origin Lite because it **is** the uBlock Origin Lite engine (same filter lists, same compiler, same cosmetic filtering and scriptlets), with a completely new interface on top.
 
-## Install (Chrome or Edge)
+## Install
 
-For a local/development install:
+### Chrome — recommended
 
-1. Download `aegis-<version>.zip` from the [Releases](../../releases) page and unzip it, or [build it](#build) yourself.
+Aegis is **published on the Chrome Web Store**:
+
+1. Open **[Aegis – Ad & Tracker Blocker on the Chrome Web Store](https://chromewebstore.google.com/detail/jcicjjichpkfanfpphceppgjkgoimbco)**.
+2. Click **Add to Chrome** and confirm the installation.
+3. To keep Aegis visible, click Chrome's Extensions (puzzle-piece) icon and pin Aegis.
+
+The Chrome Web Store installation receives extension updates through Chrome. **No ZIP download or Developer mode is required.**
+
+### Manual installation (Chrome or Edge / development)
+
+For local development or testing, you can install an unpacked build instead:
+
+1. Download `aegis-<version>.zip` from the [Releases](../../releases) page and unzip it, or [build it](#build) yourself. Note that GitHub release ZIPs may be older than the Chrome Web Store version.
 2. Open `chrome://extensions` (or `edge://extensions`).
 3. Turn on **Developer mode**.
 4. Click **Load unpacked** and select the unzipped folder (or `dist/aegis` if you built it).
@@ -14,7 +28,7 @@ For a local/development install:
 
 Optional: on the Aegis details page, turn on **Allow User Scripts**. It's only needed for cosmetic and scriptlet filters that you write yourself or import from custom lists. Everything built in works without it.
 
-The unpacked/development build can use Chrome's debug-only rule-match API for detailed live per-page statistics and the Activity log. A separate Chrome Web Store build omits that debugging permission and keeps the core blocker and supported UI features without relying on unpacked-only APIs.
+The unpacked/development build can use Chrome's debug-only rule-match API for detailed live per-page statistics and the Activity log. The published Chrome Web Store build omits that debugging permission and keeps the core blocker and supported UI features without relying on unpacked-only APIs.
 
 ## What you get
 
