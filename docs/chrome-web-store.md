@@ -2,6 +2,8 @@
 
 This file contains the release and review information for the Chrome Web Store build of Aegis.
 
+**Published extension:** [Aegis – Ad & Tracker Blocker on the Chrome Web Store](https://chromewebstore.google.com/detail/jcicjjichpkfanfpphceppgjkgoimbco). The first live listing was verified with version `2026.1014.643` (Store update: October 17, 2026). Keep these instructions for preparing future updates.
+
 ## Build the upload ZIP
 
 Requirements:
@@ -155,15 +157,13 @@ If the dashboard asks whether data is sold or used for unrelated purposes, the i
 
 ## Privacy policy
 
-The repository contains `docs/privacy.md`. Enable GitHub Pages from the repository's `docs/` directory and use the resulting public `privacy.html` URL in the Chrome Web Store Privacy Policy field.
-
-Expected URL after GitHub Pages is enabled:
+The repository contains `docs/privacy.md`. The published Chrome Web Store listing links to the following live privacy-policy URL:
 
 ```text
 https://ponze08.github.io/aegis-adblocker/privacy.html
 ```
 
-Verify the URL is publicly reachable before submitting the extension.
+Verify the URL remains publicly reachable before submitting future updates.
 
 ## Listing assets
 
@@ -177,7 +177,7 @@ Prepare at least one accurate screenshot of the Web Store build. Recommended scr
 
 Do not use an unpacked-build Activity Log screenshot to advertise the Chrome Web Store build, because the detailed live debug log is intentionally unavailable there.
 
-## Before submitting
+## Before submitting a new version
 
 - Build `npm run build:store:fresh`.
 - Run `npm run check:store` and `npm run test:stats`.
